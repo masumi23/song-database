@@ -1,14 +1,40 @@
-var TodoList = React.createClass({
+var SongListItem = React.createClass({
   render: function() {
-    var createItem = function(itemText, index) {
-      return <li key={index + itemText}>{itemText}</li>;
+    var song = this.props.items;
+    return (
+      <div>
+        <h4>{song.title}</h4>
+        <pre>{JSON.stringify(song, null, '\t')}</pre>
+      </div>
+    );
+  }
+});
+
+var SongList = React.createClass({
+  render: function() {
+    var createItem = function(song, index) {
+      return (
+        <li key={index + song.id}>
+          <SongListItem items={song}/>
+        </li>
+      );
     };
     return <ul>{this.props.items.map(createItem)}</ul>;
   }
 });
-var TodoApp = React.createClass({
+
+var SongApp = React.createClass({
   getInitialState: function() {
     return {items: [], text: ''};
+  },
+  componentWillMount: function() {
+    this.firebaseRef = new Firebase("https://songdatabase.firebaseio.com/songList/");
+    this.firebaseRef.on("child_added", function(dataSnapshot) {
+      this.state.items.push(dataSnapshot.val());
+      this.setState({
+        items: this.state.items
+      });
+    }.bind(this));
   },
   onChange: function(e) {
     this.setState({text: e.target.value});
@@ -22,8 +48,8 @@ var TodoApp = React.createClass({
   render: function() {
     return (
       <div>
-        <h3>TODO</h3>
-        <TodoList items={this.state.items} />
+        <h3>Songs</h3>
+        <SongList items={this.state.items} />
         <form onSubmit={this.handleSubmit}>
           <input onChange={this.onChange} value={this.state.text} />
           <button>{'Add #' + (this.state.items.length + 1)}</button>
@@ -33,4 +59,4 @@ var TodoApp = React.createClass({
   }
 });
 
-React.render(<TodoApp />, document.getElementById('container'));
+React.render(<SongApp />, document.getElementById('container'));
