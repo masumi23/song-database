@@ -1,10 +1,23 @@
+var Song = React.createClass({
+  render: function() {
+    var currentSong = this.props.currentSong;
+
+    if (!currentSong) {
+      return (<div/>);
+    }
+
+    return (
+      <div>{currentSong.title}</div>
+    );
+  }
+});
+
 var SongListItem = React.createClass({
   render: function() {
     var song = this.props.items;
     return (
       <div>
-        <h4>{song.title}</h4>
-        <pre>{JSON.stringify(song, null, '\t')}</pre>
+        <a href={'#' + song.id}>{song.title}</a>
       </div>
     );
   }
@@ -46,8 +59,14 @@ var SongApp = React.createClass({
     this.setState({items: nextItems, text: nextText});
   },
   render: function() {
+    var currentSongID = this.props.songID;
+    var currentSong = _.find(this.state.items, function(song){
+      return (song.id+'') === currentSongID;
+    }.bind(this));
+
     return (
       <div>
+        <Song currentSong={currentSong} />
         <h3>Songs</h3>
         <SongList items={this.state.items} />
         <form onSubmit={this.handleSubmit}>
@@ -59,4 +78,11 @@ var SongApp = React.createClass({
   }
 });
 
-React.render(<SongApp />, document.getElementById('container'));
+function render() {
+  var route = window.location.hash.substr(1);
+  React.render(<SongApp songID={route} />, document.getElementById('container'));
+}
+
+window.addEventListener('hashchange', render);
+render()
+
