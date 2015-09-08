@@ -6,9 +6,38 @@ var Song = React.createClass({
       return (<div/>);
     }
 
+    var createItem = function(key, index) {
+      return (
+        <li>{key}: {currentSong[key]}</li>
+      );
+    };
+
     return (
-      <div>{currentSong.title}</div>
-    );
+      <div>
+        <h4>{currentSong.title}</h4>
+        <h5>{currentSong.alternateTitles}</h5>
+        <h5>analysis</h5>
+        <div>gradeFloor: {currentSong.gradeFloor}</div>
+        <div>gradeCeil: {currentSong.gradeCeil}</div>
+        <div>toneSet: {currentSong.toneSet}</div>
+        <div>range: {currentSong.range}</div>
+        <div>startingPitch: {currentSong.startingPitch}</div>
+        <div>scale: {currentSong.scale}</div>
+        <div>formAnalysis: {currentSong.formAnalysis}</div>
+        <div>rhythmSet: {currentSong.rhythmSet}</div>
+        <div>tonalCenter: {currentSong.tonalCenter}</div>
+        <div>formType: {currentSong.formType}</div>
+        <h5>Other information</h5>
+        <div>informantPerformer: {currentSong.informantPerformer}</div>
+        <div>origin: {currentSong.origin}</div>
+        <div>region: {currentSong.region}</div>
+        <div>songTypes: {currentSong.songTypes}</div>
+        <div>source: {currentSong.source}</div>
+        <div>state: {currentSong.state}</div>
+        <div>subSubject: {currentSong.subSubject}</div>
+        <div>subjects: {currentSong.subjects}</div>
+      </div>
+    )
   }
 });
 
