@@ -18,7 +18,7 @@ var SongProperty = React.createClass({
 
 var Song = React.createClass({
   getInitialState: function() {
-    return {editable: false};
+    return { editable: false };
   },
   render: function() {
     var currentSong = this.props.currentSong;
@@ -31,31 +31,50 @@ var Song = React.createClass({
       this.setState({editable: !this.state.editable});
     }.bind(this);
 
+    var createItem = function(data) {
+      return (
+        <SongProperty
+          name={data.name}
+          value={data.value}
+          fbCurrentSongRef={this.props.fbCurrentSongRef}
+          editable={this.state.editable} />
+      )
+    }.bind(this);
+
+    var analysisProperties = [
+      { name: 'gradeFloor', value: currentSong.gradeFloor },
+      { name: 'gradeCeil', value: currentSong.gradeCeil },
+      { name: 'toneSet', value: currentSong.toneSet },
+      { name: 'range', value: currentSong.range },
+      { name: 'startingPitch', value: currentSong.startingPitch },
+      { name: 'scale', value: currentSong.scale },
+      { name: 'formAnalysis', value: currentSong.formAnalysis },
+      { name: 'rhythmSet', value: currentSong.rhythmSet },
+      { name: 'tonalCenter', value: currentSong.tonalCenter },
+      { name: 'formType', value: currentSong.formType },
+    ];
+
+    var otherProperties = [
+      { name: 'informantPerformer', value: currentSong.informantPerformer },
+      { name: 'origin', value: currentSong.origin },
+      { name: 'region', value: currentSong.region },
+      { name: 'songTypes', value: currentSong.songTypes },
+      { name: 'source', value: currentSong.source },
+      { name: 'state', value: currentSong.state },
+      { name: 'subSubject', value: currentSong.subSubject },
+      { name: 'subjects', value: currentSong.subjects },
+    ];
+
     return (
       <div>
         <button onClick={toggleEditMode}>{this.state.editable ? 'Editing' : 'Click to Edit'}</button>
         <h4>{currentSong.title}</h4>
         <h5>{currentSong.alternateTitles}</h5>
         <h5>analysis</h5>
-        <SongProperty name={"gradeFloor"} value={currentSong.gradeFloor} editable={this.state.editable}/>
-        <SongProperty name={"gradeCeil"} value={currentSong.gradeCeil} editable={this.state.editable}/>
-        <SongProperty name={"toneSet"} value={currentSong.toneSet} editable={this.state.editable}/>
-        <SongProperty name={"range"} value={currentSong.range} editable={this.state.editable}/>
-        <SongProperty name={"startingPitch"} value={currentSong.startingPitch} editable={this.state.editable}/>
-        <SongProperty name={"scale"} value={currentSong.scale} editable={this.state.editable}/>
-        <SongProperty name={"formAnalysis"} value={currentSong.formAnalysis} editable={this.state.editable}/>
-        <SongProperty name={"rhythmSet"} value={currentSong.rhythmSet} editable={this.state.editable}/>
-        <SongProperty name={"tonalCenter"} value={currentSong.tonalCenter} editable={this.state.editable}/>
-        <SongProperty name={"formType"} value={currentSong.formType} editable={this.state.editable}/>
+        {analysisProperties.map(createItem)}
+
         <h5>Other information</h5>
-        <SongProperty name={"informantPerformer"} value={currentSong.informantPerformer} editable={this.state.editable}/>
-        <SongProperty name={"origin"} value={currentSong.origin} editable={this.state.editable}/>
-        <SongProperty name={"region"} value={currentSong.region} editable={this.state.editable}/>
-        <SongProperty name={"songTypes"} value={currentSong.songTypes} editable={this.state.editable}/>
-        <SongProperty name={"source"} value={currentSong.source} editable={this.state.editable}/>
-        <SongProperty name={"state"} value={currentSong.state} editable={this.state.editable}/>
-        <SongProperty name={"subSubject"} value={currentSong.subSubject} editable={this.state.editable}/>
-        <SongProperty name={"subjects"} value={currentSong.subjects} editable={this.state.editable}/>
+        {otherProperties.map(createItem)}
       </div>
     )
   }
@@ -119,13 +138,14 @@ var SongApp = React.createClass({
   },
   render: function() {
     var currentSongID = this.props.songID;
+    //TODO: should we use Firebase instead, or is it kosher cause of the 1-way binding?
     var currentSong = _.find(this.state.items, function(song){
       return (song.id+'') === currentSongID;
     }.bind(this));
 
     return (
       <div>
-        <Song currentSong={currentSong} firebaseRefs={this.firebaseRefs} />
+        <Song currentSong={currentSong} fbCurrentSongRef={this.firebaseRefs.items.child(currentSongID)} />
         <h3>Songs</h3>
         <SongList items={this.state.items} />
         <form onSubmit={this.handleSubmit}>
